@@ -1,0 +1,28 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "Matt Koski",email = "maccam912@gmail.com"},
+]
+dependencies = [
+    "structlog>=23.2.0",
+    "rich>=13.6.0",
+    "pydantic>=2.4.2",
+    "openai>=1.1.1",
+    "toml>=0.10.2",
+    "playwright>=1.39.0",
+    "Pillow>=10.1.0",
+    "beautifulsoup4>=4.12.2",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool]
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "isort>=5.12.0",
+    "black>=23.10.1",
+]
