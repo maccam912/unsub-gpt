@@ -46,6 +46,7 @@ async def predict_marketing_email(content: str) -> dict:
     plain_text = soup.get_text()[:4000]
     log.debug("links", links=links)
     links_str = str(links)
+    log.debug("")
     response = await client.chat.completions.create(
         model=CHEAP,
         messages=[
@@ -70,37 +71,6 @@ async def predict_marketing_email(content: str) -> dict:
     )
     log.debug("Marketing email predicted")
     return json.loads(response.choices[0].message.content)
-
-
-async def llm_predict_marketing_email(content: str) -> dict:
-    """Checks the last 300 characters of content to see if it contains an unsubscribe link."""
-    log.debug("Predicting marketing email")
-    snippet = content[-2000:]
-
-    response = await client.chat.completions.create(
-        model=CHEAP,
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    'Respond with a JSON structure {"unsubscribe_url": <url>} if the'
-                    " email lets a user unsubscribe (provide the extracted URL),"
-                    ' otherwise respond with {"unsubscribe_url": null}'
-                ),
-            },
-            {
-                "role": "user",
-                "content": (
-                    "Given the end of this email, determine if it provides a link to"
-                    f" let the user unsubscribe: {snippet}"
-                ),
-            },
-        ],
-        response_format=ResponseFormat(type="json_object"),
-    )
-    log.debug("Marketing email predicted")
-    return json.loads(response.choices[0].message.content)
-
 
 async def clean_up_json(content: str) -> dict:
     log.debug("Cleaning up JSON", content=content)
@@ -177,11 +147,12 @@ async def run_unsubscribe_loop(url: str):
             if action["action"] == "done":
                 done = True
             elif action["action"] == "click":
-                await browser.click(action["role"], action["locator"])
+                await browser.click(action["role"], action["name"])
                 previous_actions += [action]
         else:
             # What action was suggested here?
             log.debug("unknown action", action=action)
             return
         await browser.screenshot()
+        log.debug("Got screenshot")
     return
