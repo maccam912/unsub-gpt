@@ -46,8 +46,8 @@ async def predict_marketing_email(content: str) -> dict:
     plain_text = soup.get_text()[:4000]
     log.debug("links", links=links)
     links_str = str(links)
-    log.debug("")
     response = await client.chat.completions.create(
+        timeout=10,
         model=CHEAP,
         messages=[
             {
@@ -75,6 +75,7 @@ async def predict_marketing_email(content: str) -> dict:
 async def clean_up_json(content: str) -> dict:
     log.debug("Cleaning up JSON", content=content)
     response = await client.chat.completions.create(
+        timeout=10,
         model=CHEAP,
         messages=[
             {
@@ -110,6 +111,7 @@ async def run_unsubscribe_loop(url: str):
         )
         actions_str = str(previous_actions)
         response = await client.chat.completions.create(
+            timeout=60,
             model=VISION,
             messages=[
                 {
